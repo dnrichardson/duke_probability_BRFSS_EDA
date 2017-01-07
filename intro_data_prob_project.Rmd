@@ -1,0 +1,100 @@
+---
+title: "Exploring the BRFSS data"
+author: "Dale Richardson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  html_document: 
+    toc: true
+    keep_md: true
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Overview
+
+This document is an Exploratory Data Analysis (EDA) of the 2013 [Behavioral Risk Factor Surveillance System (BRFSS)](https://cdc.gov/brfss) data that has been provided to students of the Coursera course, *Introduction to Probability and Data*, taught by Duke University. 
+
+The primary objective of the BRFSS is to, "collect uniform, state-specific data on preventive health practices and risk behaviors that are linked to chronic diseases, injuries, and preventable infectious diseases that affect the adult population." 
+
+For more information on the BRFSS, please see the [Centers for Disease Control and Prevention overview](https://www.cdc.gov/brfss/annual_data/2013/pdf/Overview_2013.pdf). 
+
+In this document, I will briefly comment on the data itself (how it was collected and if causality can be inferred), suggest three research questions based on the variables measured in the dataset and lastly perform the exploratory analyses to address the research questions. 
+
+We begin by loading necessary R packages and the BRFSS data itself. 
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+### Load data
+
+```{r load-data, cache = TRUE}
+load("brfss2013.RData")
+```
+
+
+
+* * *
+
+## Part 1: Data
+
+As noted above, the data analyzed here were obtained from the 2013 Behavioral Risk Factor Surveillance System (BRFSS) survey, administered by the Centers for Disease Control's Population Health Surveillance Branch. The data are based on a population of non-institutionalized adults residing in all 50 states of the USA and its territories, who are at least 18 years old and who have a landline or cellular telephone. Results based on these data are **NOT** generalizable beyond the aforementioned population from which the samples were obtained, e.g. not to a population under 18 years of age, nor to those living outside of the USA and its territories. 
+
+These data were collected by using a disproportionate stratified sampling design in 51 projects, whereas only simple random sampling was employed in Guam and Puerto Rico. Disproportionate stratified sampling was used in order to ensure that enough members of underrepresented groups would be included in the samples. For more details, please see page 6 of the [BRFSS overview](https://www.cdc.gov/brfss/annual_data/2013/pdf/Overview_2013.pdf).
+
+These data comprise an in-depth observational study, without random assignment of subjects into experimental/control groups. Therefore, it is **NOT** possible to infer causality based on these data. 
+
+With any survey, it is important to consider sources of potential bias. One potential bias that should be considered is non-response. For example, perhaps very busy people are underrepresented, or people who work nights and sleep during the day. Additionally, there may be an inherent bias between individuals/households who primarily use cell phones instead of landlines, i.e. perhaps people who only use cell phones are younger and more mobile whereas those who maintain landlines spend more time at home.
+
+
+* * *
+
+## Part 2: Research questions
+
+One potential avenue is to create a choropleth map of intensities of certain diseases/prevalences. I think this would be a cool plot. The question could be something along the lines of, "how does prevalence of X differ by state?"
+
+How does fruit and vegetable consumption correlate with health?
+
+**Research quesion 1:**
+
+**Research quesion 2:**
+
+**Research quesion 3:**
+
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+NOTE: Insert code chunks as needed by clicking on the "Insert a new code chunk" 
+button (green button with orange arrow) above. Make sure that your code is visible
+in the project you submit. Delete this note when before you submit your work.
+
+**Research quesion 1:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 2:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 3:**
+
+```{r}
+
+```
+
