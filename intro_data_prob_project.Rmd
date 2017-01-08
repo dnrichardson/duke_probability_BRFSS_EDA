@@ -50,7 +50,9 @@ These data were collected by using a disproportionate stratified sampling design
 
 These data comprise an in-depth observational study, without random assignment of subjects into experimental/control groups. Therefore, it is **NOT** possible to infer causality based on these data. 
 
-With any survey, it is important to consider sources of potential bias. One potential bias that should be considered is non-response. For example, perhaps very busy people are underrepresented, or people who work nights and sleep during the day. Additionally, there may be an inherent bias between individuals/households who primarily use cell phones instead of landlines, i.e. perhaps people who only use cell phones are younger and more mobile whereas those who maintain landlines spend more time at home. Another potential source of bias could arise from the demeanor of the interviewer conducting the survey over the telephone. If the interviewer's performance was sub-standard or somehow offputting, this could affect the responsiveness of the participant. 
+With any survey, it is important to consider sources of potential bias. One potential bias that should be considered is non-response. For example, perhaps very busy people are underrepresented, or people who work nights and sleep during the day, thus would be absent during the times of the phone calls. 
+
+Additionally, there may be an inherent bias between individuals/households who primarily use cell phones instead of landlines, i.e. perhaps people who only use cell phones are younger and more mobile whereas those who maintain landlines spend more time at home. Another potential source of bias could arise from the demeanor of the interviewer conducting the survey over the telephone. If the interviewer's performance was sub-standard or somehow offputting, this could affect the responsiveness of the participant. 
 
 
 * * *
@@ -146,7 +148,7 @@ detach("package:plyr", unload = TRUE)
 
 ```
 
-The distribution of college graduates (4 years or more) is **not uniform** across the U.S.A. Interestingly, the *highest proportion of graduates reside in the District of Columbia*, while the *lowest proportion of degree holders reside in West Virginia*. Generally, the Northeast and West Coast of the United States are home to a higher proportion of 4-year college graduates, along with states like Colorado and Minnesota. The states with the lowest percentages of college graduates are the southern states, along with some mid-western states such as Nebraska and Oklahoma.  
+The distribution of college graduates (4 years or more) is **not uniform** across the U.S.A. Interestingly, the *highest proportion of graduates reside in the District of Columbia*, while the *lowest proportion of degree holders reside in West Virginia*. Perhaps this high number of college degree holders in the District of Columbia can be attributed to the high concentration of politics and government-related careers in DC. Generally, the Northeast and West Coast of the United States are home to a higher proportion of 4-year college graduates, along with states like Colorado and Minnesota. The states with the lowest percentages of college graduates are the southern states, along with some mid-western states such as Nebraska and Oklahoma.  
 
 **Research quesion 2:**
 
@@ -205,6 +207,7 @@ genHealth <- genHealth %>%
         mutate(degree = ifelse(educa == "College 4 years or more (College graduate)", "Yes", "No")) %>% 
         select(genhlth, exerany2, degree) 
 
+
 ## group by each variable
 genHealthGrouped <- genHealth %>% group_by(genhlth, exerany2, degree)
 
@@ -217,23 +220,21 @@ forPlotting <- genHealthGrouped %>%
 kable(forPlotting, caption = "Table of counts and relative frequencies of General Health status based on Exercise in past 30 days and and Education level", align = c("c", "r")) 
 
 ## plot relative frequencies with a stacked bar plot
-ggplot(forPlotting,aes(x = degree, y = freq,fill = exerany2)) + 
-    geom_bar(position = "fill",stat = "identity") + facet_grid(~genhlth) +
-        ggtitle("General health status based on exercise in past 30 days and education level") +
-        xlab("College Degree") +
-        ylab("Relative frequency") +
-        guides(fill = guide_legend(reverse=TRUE)) +
-        scale_fill_discrete(name="Exercise in past 30 days") +
-        theme_bw()
-
 ggplot(forPlotting,aes(x = genhlth, y = freq,fill = degree)) + 
     geom_bar(position = "fill",stat = "identity") + facet_grid(~exerany2) +
-        ggtitle("General health status based on exercise in past 30 days and education level") +
-        xlab("general health") +
+        ggtitle("General health status based on exercise in past 30 days and education level\n
+                Exercised in past 30 days?") +
+        xlab("General health status") +
         ylab("Relative frequency") +
         guides(fill = guide_legend(reverse=TRUE)) +
         scale_fill_discrete(name="College degree") +
-        theme_bw()
+        theme_bw() + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 ```
 
-Here we can see an interesting trend, those with college degrees tend to exercise more than those who do not, irrespective of general health status. However, those individuals who 
+Here we can see an interesting trend, those who have exercised in the past 30 days and have excellent health consist of a higher proportion of college degree holders than those who have not exercised in the past 30 days but also consider themselves to be of excellent health. Does this mean that college degree holders are more likely to exercise and thus be of better health status?
+
+Furthermore, of the group who did not exercise in the past 30 days (right panel of figure), there appear to be generally lower proportions of college degree holders. Considering the general health status of "Poor", there seems to be a disproportionate amount of non-degree holders in this category, irrespective of exercise in the past 30 days. Does it make sense that those who have not obtained a college degree consider themselves to be of poorer health? 
+
+Unfortunately, diving deeper into this data will have to wait for another day. 
