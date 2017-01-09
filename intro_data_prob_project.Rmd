@@ -76,19 +76,15 @@ How does marital status and employment status correlate with the incidence of ha
 
 The final question is the following:
 
-Do people who exercise regularly have better general health, and how does education level relate to the tendency to exercise regularly? In other words, do people with college degrees exercise more than those who do not and consequently, have better overall health? 
+Are those people who have been told they have major depression overweight and is there a difference between the sexes?
 
-The variables of interest here are `general health`, `exercise level` and `education level`. Once again, the underlying hypothesis is that having a higher education moves one towards increased physical activity, which improves overall health. 
+The variables of interest here are `addepev2`, `sex` and `X_bmi5`. The underlying hypothesis here is that there will be a difference in body mass index across the sexes and that those who are overweight or obese will tend to be more depressed. 
 
 * * *
 
 ## Part 3: Exploratory data analysis
 
 Here you will find the relevant `R` code and descriptions on how I have processed the `brfss2013` data set to answer my research questions. 
-
-NOTE: Insert code chunks as needed by clicking on the "Insert a new code chunk" 
-button (green button with orange arrow) above. Make sure that your code is visible
-in the project you submit. Delete this note when before you submit your work.
 
 **Research quesion 1:**
 
@@ -154,7 +150,12 @@ The distribution of college graduates (4 years or more) is **not uniform** acros
 
 How does marital status and employment status correlate with the incidence of having been told that one has major depression? In other words, are retired people more happy than employed people, and does this happiness change depending on if one is married or divorced? 
 
-To answer this question, I will use the variables `addepev2`, `employ1` and `marital`. `addepev2`corresponds to whether or not the participant had been told he or she has major depressive disorder. I will filter the brfss2013 dataframe to pull out only those cases where people are either `Employed for wages` or have been/are `Divorced`, `Married` or `Widowed`.
+To answer this question, I will use the following variables:
+- `addepev2`: corresponds to whether or not the participant has ever been told he or she has major depressive disorder
+- `employ1`: employment status
+- `marital`: marital status. 
+
+I will filter the brfss2013 dataframe to pull out only those cases where people are either `Employed for wages` or `Retired` and have been/are `Divorced`, `Married` or `Widowed`.
 
 
 ```{r, question-2, message = FALSE, fig.height = 4}
@@ -189,52 +190,39 @@ The above plot suggests a few interesting trends. For one, those who currently e
 
 **Research quesion 3:**
 
-Do people who exercise regularly have better general health, and how does education level relate to the tendency to exercise regularly? In other words, do people with college degrees exercise more than those who do not and consequently, have better overall health?
+Are those people who have been told they have major depression overweight and is there a difference between the sexes?
 
 To answer this question, I will once again subset the `brfss2013` dataframe and pull out only the relevant variables "needed" to address this question. From the codebook, I will use the following variables: 
 
-- `genhlth`: general health status
-- `exerany2`: exercise In Past 30 Days
-- `educa`: education Level
+- `addepev2`: have been told has major depressive disorder
+- `sex`: male or female
+- `X_bmi5`: calculated body-mass index, with 2 implied decimal places
 
 ```{r question-3, message = FALSE, fig.height = 6}
 ## subset the original dataframe to grab only the variables of interest, remove all NAs
-genHealth <- brfss2013 %>% select(genhlth, exerany2, educa) %>%
+depressedBMI <- brfss2013 %>% select(addepev2, sex, X_bmi5) %>%
         na.omit()
 
-## create new variable to denote college degree or not
-genHealth <- genHealth %>% 
-        mutate(degree = ifelse(educa == "College 4 years or more (College graduate)", "Yes", "No")) %>% 
-        select(genhlth, exerany2, degree) 
+## look at summary
+sums <- summary(depressedBMI)
+kable(sums, caption = "Five-number summary", align = c("c", "r"))
 
+## compare IQRs
+iqrs <- aggregate(X_bmi5~addepev2+sex, depressedBMI, IQR)
+kable(iqrs, caption = "Inter quartile ranges of BMI by Sex and Major Depression", align = c("c","r"))
 
-## group by each variable
-genHealthGrouped <- genHealth %>% group_by(genhlth, exerany2, degree)
-
-## create summary of counts and relative frequencies for each class
-forPlotting <- genHealthGrouped %>%
-        summarise(n = n()) %>%
-        mutate(freq = n / sum(n))
-
-## Show the table
-kable(forPlotting, caption = "Table of counts and relative frequencies of General Health status based on Exercise in past 30 days and and Education level", align = c("c", "r")) 
-
-## plot relative frequencies with a stacked bar plot
-ggplot(forPlotting,aes(x = genhlth, y = freq,fill = degree)) + 
-    geom_bar(position = "fill",stat = "identity") + facet_grid(~exerany2) +
-        ggtitle("General health status based on exercise in past 30 days and education level\n
-                Exercised in past 30 days?") +
-        xlab("General health status") +
-        ylab("Relative frequency") +
-        guides(fill = guide_legend(reverse=TRUE)) +
-        scale_fill_discrete(name="College degree") +
-        theme_bw() + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+## plot boxplots faceted by sex, abline denotes BMI marking "overweight"
+ggplot(depressedBMI, aes(addepev2, X_bmi5)) + geom_boxplot() + facet_wrap(~sex) +
+        geom_hline(yintercept = 2500, colour = "red") +
+        geom_hline(yintercept = 3000, colour = "blue") +
+        ggtitle("Median body mass index is higher for those with history of Major Depression") +
+        xlab("Major Depression") +
+        ylab("Body Mass Index") +
+        theme_bw()
 
 ```
 
-Here we can see an interesting trend, those who have exercised in the past 30 days and have excellent health consist of a higher proportion of college degree holders than those who have not exercised in the past 30 days but also consider themselves to be of excellent health. Does this mean that college degree holders are more likely to exercise and thus be of better health status?
+Here we can see an interesting trend regarding history of major depression and body mass index. For one, irrespective of history of depression or sex, the majority of participants are overweight or obese, as indicated by the medians being above the horizontal red line at `BMI = 2500`, which marks the limit for being overweight. The blue line marks the BMI corresponding to obesity (`BMI = 3000`) Interestingly, the non-depressed females have a median BMI closer to 2500, suggesting that more non-depressed females are at a healthy weight/BMI. Another thing to note is the incredibly right-skewed data. There are extremely long tails in the alarmingly high BMI ranges as indicated by the outliers. 
 
-Furthermore, of the group who did not exercise in the past 30 days (right panel of figure), there appear to be generally lower proportions of college degree holders. Considering the general health status of "Poor", there seems to be a disproportionate amount of non-degree holders in this category, irrespective of exercise in the past 30 days. Does it make sense that those who have not obtained a college degree consider themselves to be of poorer health? 
+For both males and females, those with a history of major depression tend to have higher BMIs than those without a history of major depression. Furthermore, there appears to be more variability in BMI in females as evidenced by the larger interquartile ranges. For example, the IQR is higher in depressed females (`932`) in contrast to depressed males (`740`). The same is true for the non-depressed individuals: we see that non-depressed females have a larger IQR than non-depressed males, `740 vs. 611`, respectively. Understanding why there is more variability in the female BMI is hard to discern without further analysis. One could speculate that female BMI could more variable on account of the influence of advertisements and other cultural pressures to be thin. This could create scenarios of extreme dieting, which could increase variability in BMI. 
 
-Unfortunately, diving deeper into this data will have to wait for another day. 
